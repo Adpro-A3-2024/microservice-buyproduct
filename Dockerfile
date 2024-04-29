@@ -11,6 +11,6 @@ ENV JDBC_DATABASE_USERNAME ${JDBC_DATABASE_USERNAME}
 
 WORKDIR /app
 RUN ls -al
-COPY ./microservice_buyproduct-0.0.1-SNAPSHOT.jar /app
+COPY ./buyproduct-0.0.1-SNAPSHOT.jar /app
 EXPOSE 8080
 CMD ["java","-jar","microservice_buyproduct-0.0.1-SNAPSHOT.jar"]
