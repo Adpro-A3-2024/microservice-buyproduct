@@ -30,6 +30,12 @@ dependencies {
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	runtimeOnly("org.postgresql:postgresql")
+	compileOnly("org.springframework.boot:spring-boot-devtools")
+	implementation("jakarta.validation:jakarta.validation-api:3.1.0-M2")
+	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 }
 
 tasks.withType<Test> {
