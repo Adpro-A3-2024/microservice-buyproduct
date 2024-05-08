@@ -2,10 +2,12 @@ package com.adproa3.microservice.product.observable;
 
 import com.adproa3.microservice.product.model.Cart;
 import com.adproa3.microservice.product.observer.Observer;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class CartObservable {
     private List<Observer> observers = new ArrayList<>();
 
