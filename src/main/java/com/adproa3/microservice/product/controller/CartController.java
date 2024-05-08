@@ -1,7 +1,6 @@
 package com.adproa3.microservice.product.controller;
 
 import com.adproa3.microservice.product.model.Cart;
-import com.adproa3.microservice.product.model.Product;
 import com.adproa3.microservice.product.observable.CartObservable;
 import com.adproa3.microservice.product.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,20 +17,10 @@ public class CartController {
     @Autowired
     private CartObservable cartObservable;
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createCart(@RequestBody Cart cart) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getCartById(@PathVariable String userId) {
         try {
-            Cart createdCart = cartService.create(cart);
-            return ResponseEntity.ok(createdCart);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to create cart: " + e.getMessage());
-        }
-    }
-
-    @GetMapping("/{cartId}")
-    public ResponseEntity<?> getCartById(@PathVariable String cartId) {
-        try {
-            Cart cart = cartService.findCartById(cartId);
+            Cart cart = cartService.findByUserId(userId);
             if (cart != null) {
                 return ResponseEntity.ok(cart);
             } else {
@@ -42,10 +31,10 @@ public class CartController {
         }
     }
 
-    @PostMapping("/{cartId}/addProduct")
-    public ResponseEntity<?> addProductToCart(@PathVariable String cartId, @RequestBody Product product, @RequestParam int quantity) {
+    @PostMapping("/{userId}/addProduct")
+    public ResponseEntity<?> addProductToCart(@PathVariable String userId, @RequestBody String productId, @RequestParam int quantity) {
         try {
-            Cart updatedCart = cartService.addProductToCart(cartId, product, quantity);
+            Cart updatedCart = cartService.addProductToCart(userId, productId, quantity);
             cartObservable.notifyObservers(updatedCart);
             return ResponseEntity.ok(updatedCart);
         } catch (Exception e) {
@@ -53,10 +42,10 @@ public class CartController {
         }
     }
 
-    @DeleteMapping("/{cartId}/removeProduct")
-    public ResponseEntity<?> removeProductFromCart(@PathVariable String cartId, @RequestBody Product product) {
+    @DeleteMapping("/{userId}/removeProduct")
+    public ResponseEntity<?> removeProductFromCart(@PathVariable String userId, @RequestBody String productId) {
         try {
-            Cart updatedCart = cartService.removeProductFromCart(cartId, product);
+            Cart updatedCart = cartService.removeProductFromCart(userId, productId);
             cartObservable.notifyObservers(updatedCart);
             return ResponseEntity.ok(updatedCart);
         } catch (Exception e) {
