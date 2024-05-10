@@ -1,12 +1,18 @@
 package com.adproa3.microservice.product.service;
 
-import com.adproa3.microservice.product.model.Product;
-import java.util.List;
 
+import com.adproa3.microservice.product.model.DTO.SetProductDiscountDTO;
+import com.adproa3.microservice.product.model.Product;
+import lombok.Generated;
+
+import java.util.List;
+import java.util.UUID;
+@Generated
 public interface ProductService {
-    Product create(Product product);
-    List<Product> findAll();
-    Product findById(String productId);
-    Product update(String productId, Product product);
-    Product deleteProductById(String productId);
+    public Product createProduct(Product product);
+    public List<Product> getAllProducts();
+    public Product editProduct(Product product);
+    public Product findOneById(UUID id);
+    public List<Product> searchProducts(String query);
+    public Product setProductDiscount(SetProductDiscountDTO setProductDiscountDTO);
 }

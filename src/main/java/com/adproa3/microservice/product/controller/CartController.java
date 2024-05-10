@@ -7,11 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {
 
-    @Autowired
     private CartService cartService;
 
     @Autowired
@@ -32,7 +33,7 @@ public class CartController {
     }
 
     @PostMapping("/{userId}/addProduct")
-    public ResponseEntity<?> addProductToCart(@PathVariable String userId, @RequestBody String productId, @RequestParam int quantity) {
+    public ResponseEntity<?> addProductToCart(@PathVariable String userId, @RequestBody UUID productId, @RequestParam int quantity) {
         try {
             Cart updatedCart = cartService.addProductToCart(userId, productId, quantity);
             cartObservable.notifyObservers(updatedCart);
@@ -43,7 +44,7 @@ public class CartController {
     }
 
     @DeleteMapping("/{userId}/removeProduct")
-    public ResponseEntity<?> removeProductFromCart(@PathVariable String userId, @RequestBody String productId) {
+    public ResponseEntity<?> removeProductFromCart(@PathVariable String userId, @RequestBody UUID productId) {
         try {
             Cart updatedCart = cartService.removeProductFromCart(userId, productId);
             cartObservable.notifyObservers(updatedCart);
