@@ -5,9 +5,12 @@ import com.adproa3.microservice.product.observable.CartObservable;
 import com.adproa3.microservice.product.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
+import io.micrometer.core.annotation.Timed;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -18,39 +21,45 @@ public class CartController {
     @Autowired
     private CartObservable cartObservable;
 
+    @Timed
+    @Async
     @GetMapping("/{userId}")
-    public ResponseEntity<?> getCartById(@PathVariable String userId) {
+    public CompletableFuture<ResponseEntity<?>> getCartById(@PathVariable String userId) {
         try {
             Cart cart = cartService.findByUserId(userId);
             if (cart != null) {
-                return ResponseEntity.ok(cart);
+                return CompletableFuture.completedFuture(ResponseEntity.ok(cart));
             } else {
-                return ResponseEntity.notFound().build();
+                return CompletableFuture.completedFuture(ResponseEntity.notFound().build());
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to get cart: " + e.getMessage());
+            return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Failed to get cart: " + e.getMessage()));
         }
     }
 
+    @Timed
+    @Async
     @PostMapping("/{userId}/addProduct")
-    public ResponseEntity<?> addProductToCart(@PathVariable String userId, @RequestBody UUID productId, @RequestParam int quantity) {
+    public CompletableFuture<ResponseEntity<?>> addProductToCart(@PathVariable String userId, @RequestBody UUID productId, @RequestParam int quantity) {
         try {
             Cart updatedCart = cartService.addProductToCart(userId, productId, quantity);
             cartObservable.notifyObservers(updatedCart);
-            return ResponseEntity.ok(updatedCart);
+            return CompletableFuture.completedFuture(ResponseEntity.ok(updatedCart));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to add product to cart: " + e.getMessage());
+            return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Failed to add product to cart: " + e.getMessage()));
         }
     }
 
+
+    @Async
     @DeleteMapping("/{userId}/removeProduct")
-    public ResponseEntity<?> removeProductFromCart(@PathVariable String userId, @RequestBody UUID productId) {
+    public CompletableFuture<ResponseEntity<?>> removeProductFromCart(@PathVariable String userId, @RequestBody UUID productId) {
         try {
             Cart updatedCart = cartService.removeProductFromCart(userId, productId);
             cartObservable.notifyObservers(updatedCart);
-            return ResponseEntity.ok(updatedCart);
+            return CompletableFuture.completedFuture(ResponseEntity.ok(updatedCart));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to remove product from cart: " + e.getMessage());
+            return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Failed to remove product from cart: " + e.getMessage()));
         }
     }
 }
