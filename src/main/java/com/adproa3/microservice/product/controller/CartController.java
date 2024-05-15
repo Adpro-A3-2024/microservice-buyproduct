@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {
-
+    @Autowired
     private CartService cartService;
 
     @Autowired
