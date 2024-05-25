@@ -1,6 +1,7 @@
 package com.adproa3.microservice.product.service;
 
 import com.adproa3.microservice.product.model.Cart;
+import com.adproa3.microservice.product.model.tempModel.Order;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -17,4 +18,5 @@ public interface CartService {
     Cart updateProductQuantity(String userId, UUID productId, int newQuantity);
     Map<UUID, Integer> getAllProductsInCart(String userId);
     boolean isCartEmpty(String userId);
+    Order checkout(String userId, String name, String address);
 }
