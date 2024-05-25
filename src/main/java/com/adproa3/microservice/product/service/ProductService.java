@@ -1,8 +1,8 @@
 package com.adproa3.microservice.product.service;
 
 
-import com.adproa3.microservice.product.model.DTO.SetProductDiscountDTO;
-import com.adproa3.microservice.product.model.Product;
+import com.adproa3.microservice.product.model.tempModel.DTO.SetProductDiscountDTO;
+import com.adproa3.microservice.product.model.tempModel.Product;
 import lombok.Generated;
 
 import java.util.List;

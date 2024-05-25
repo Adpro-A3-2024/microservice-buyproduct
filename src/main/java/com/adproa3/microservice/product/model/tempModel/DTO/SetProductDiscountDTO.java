@@ -1,4 +1,4 @@
-package com.adproa3.microservice.product.model.DTO;
+package com.adproa3.microservice.product.model.tempModel.DTO;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

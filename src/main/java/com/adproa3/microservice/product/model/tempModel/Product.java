@@ -1,4 +1,4 @@
-package com.adproa3.microservice.product.model;
+package com.adproa3.microservice.product.model.tempModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;

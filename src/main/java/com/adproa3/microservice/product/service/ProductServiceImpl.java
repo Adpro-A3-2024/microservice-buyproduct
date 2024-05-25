@@ -1,14 +1,12 @@
 package com.adproa3.microservice.product.service;
 
-import com.adproa3.microservice.product.model.DTO.SetProductDiscountDTO;
-import com.adproa3.microservice.product.model.Product;
+import com.adproa3.microservice.product.model.tempModel.DTO.SetProductDiscountDTO;
+import com.adproa3.microservice.product.model.tempModel.Product;
 import com.adproa3.microservice.product.repository.ProductRepository;
 import lombok.Generated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
