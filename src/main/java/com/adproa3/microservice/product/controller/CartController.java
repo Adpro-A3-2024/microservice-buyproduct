@@ -1,6 +1,7 @@
 package com.adproa3.microservice.product.controller;
 
 import com.adproa3.microservice.product.model.Cart;
+import com.adproa3.microservice.product.model.tempModel.Order;
 import com.adproa3.microservice.product.observable.CartObservable;
 import com.adproa3.microservice.product.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class CartController {
 
     @Timed
     @Async
-    @PostMapping("/{userId}/addProduct")
+    @PostMapping("/{userId}/add-product")
     public CompletableFuture<ResponseEntity<?>> addProductToCart(@PathVariable String userId, @RequestBody UUID productId, @RequestParam int quantity) {
         try {
             Cart updatedCart = cartService.addProductToCart(userId, productId, quantity);
@@ -52,7 +53,7 @@ public class CartController {
 
 
     @Async
-    @DeleteMapping("/{userId}/removeProduct")
+    @DeleteMapping("/{userId}/remove-product")
     public CompletableFuture<ResponseEntity<?>> removeProductFromCart(@PathVariable String userId, @RequestBody UUID productId) {
         try {
             Cart updatedCart = cartService.removeProductFromCart(userId, productId);
@@ -60,6 +61,32 @@ public class CartController {
             return CompletableFuture.completedFuture(ResponseEntity.ok(updatedCart));
         } catch (Exception e) {
             return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Failed to remove product from cart: " + e.getMessage()));
+        }
+    }
+
+    @Timed
+    @Async
+    @DeleteMapping("/{userId}/clear")
+    public CompletableFuture<ResponseEntity<?>> clearCart(@PathVariable String userId) {
+        try {
+            Cart clearedCart = cartService.clearCart(userId);
+            cartObservable.notifyObservers(clearedCart);
+            return CompletableFuture.completedFuture(ResponseEntity.ok(clearedCart));
+        } catch (Exception e) {
+            return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Failed to clear cart: " + e.getMessage()));
+        }
+    }
+
+    @Timed
+    @Async
+    @PostMapping("/{userId}/checkout")
+    public CompletableFuture<ResponseEntity<?>> checkout(@PathVariable String userId, @RequestParam String name, @RequestParam String address) {
+        try {
+            Order order = cartService.checkout(userId, name, address);
+            cartObservable.notifyObservers(order);
+            return CompletableFuture.completedFuture(ResponseEntity.ok(order));
+        } catch (Exception e) {
+            return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Failed to checkout: " + e.getMessage()));
         }
     }
 }
