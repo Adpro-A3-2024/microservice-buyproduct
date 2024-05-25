@@ -1,12 +1,21 @@
 plugins {
 	java
 	jacoco
+	id("org.sonarqube") version "4.4.1.3373"
 	id("org.springframework.boot") version "3.2.4"
 	id("io.spring.dependency-management") version "1.1.4"
 }
 
 group = "com.adproa3.microservice"
 version = "0.0.1-SNAPSHOT"
+
+sonar {
+	properties {
+		property("sonar.projectKey", "Adpro-A3-2024_microservice-buyproduct")
+		property("sonar.organization", "adpro-a3-2024")
+		property("sonar.host.url", "https://sonarcloud.io")
+	}
+}
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_21
@@ -80,6 +89,7 @@ tasks.jacocoTestReport {
 	reports {
 		xml.required.set(true)
 		csv.required.set(true)
+		html.required.set(true)
 		html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
 	}
 }
