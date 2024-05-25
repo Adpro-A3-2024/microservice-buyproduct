@@ -1,8 +1,10 @@
 package com.adproa3.microservice.product.service;
 
 import com.adproa3.microservice.product.model.Cart;
-import com.adproa3.microservice.product.model.Product;
+import com.adproa3.microservice.product.model.tempModel.Order;
+import com.adproa3.microservice.product.model.tempModel.Product;
 import com.adproa3.microservice.product.repository.CartRepository;
+import com.adproa3.microservice.product.repository.OrderRepository;
 import com.adproa3.microservice.product.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ public class CartServiceImpl implements CartService {
     private CartRepository cartRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Override
     public Cart findByUserId(String userId) {
@@ -78,10 +82,8 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartRepository.findByUserId(userId);
         if (cart != null) {
             Map<UUID, Integer> productsInCart = cart.getProductsInCart();
-            if (productsInCart.containsKey(productId)) {
-                productsInCart.put(productId, newQuantity);
-                return cartRepository.save(cart);
-            }
+            productsInCart.put(productId, newQuantity);
+            return cartRepository.save(cart);
         }
         return null;
     }
@@ -99,5 +101,29 @@ public class CartServiceImpl implements CartService {
     public boolean isCartEmpty(String userId) {
         Cart cart = cartRepository.findByUserId(userId);
         return cart == null || cart.getProductsInCart().isEmpty();
+    }
+
+    @Override
+    public Order checkout(String userId, String name, String address) {
+        Cart cart = cartRepository.findByUserId(userId);
+        if (cart == null || cart.getProductsInCart().isEmpty()) {
+            throw new IllegalStateException("Cart is empty");
+        }
+
+        double totalPrice = getTotalPrice(userId);
+        Map<UUID, Integer> productsInCart = cart.getProductsInCart();
+
+        Order order = new Order(userId, name, address, totalPrice, productsInCart);
+        Order savedOrder = orderRepository.save(order);
+
+        for (Map.Entry<UUID, Integer> entry : productsInCart.entrySet()) {
+            Product product = productRepository.getReferenceById(entry.getKey());
+            product.setProductStock(product.getProductStock() - entry.getValue());
+            productRepository.save(product);
+        }
+
+        clearCart(userId);
+
+        return savedOrder;
     }
 }
