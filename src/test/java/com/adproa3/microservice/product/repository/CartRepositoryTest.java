@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class CartRepositoryTest {
+class CartRepositoryTest {
 
     @Mock
     private CartRepository cartRepository;
@@ -25,7 +25,7 @@ public class CartRepositoryTest {
     }
 
     @Test
-    public void testFindByUserId() {
+    void testFindByUserId() {
         // Test data
         String userId = "user-1";
         Cart cart = new Cart(userId);

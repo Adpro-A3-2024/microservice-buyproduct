@@ -25,7 +25,7 @@ public class CartController {
     private CartObservable cartObservable;
 
     @Async
-    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+    @GetMapping("/{userId}")
     public CompletableFuture<ResponseEntity<?>> getCartById(@PathVariable String userId) {
         try {
             Cart cart = cartService.findByUserId(userId);
@@ -40,7 +40,7 @@ public class CartController {
     }
 
     @Async
-    @RequestMapping(value = "/{userId}/add-product", method = RequestMethod.POST)
+    @PostMapping("/{userId}/add-product")
     public CompletableFuture<ResponseEntity<?>> addProductToCart(@PathVariable String userId, @RequestBody @Validated AddProductRequest request) {
         try {
             Cart updatedCart = cartService.addProductToCart(userId, request.getProductId(), request.getQuantity());
@@ -52,7 +52,7 @@ public class CartController {
     }
 
     @Async
-    @RequestMapping(value = "/{userId}/delete-product", method = RequestMethod.DELETE)
+    @DeleteMapping("/{userId}/delete-product")
     public CompletableFuture<ResponseEntity<?>> deleteProductFromCart(@PathVariable String userId, @RequestBody UUID productId) {
         try {
             Cart updatedCart = cartService.deleteProductFromCart(userId, productId);
@@ -64,7 +64,7 @@ public class CartController {
     }
 
     @Async
-    @RequestMapping(value = "/{userId}/clear", method = RequestMethod.DELETE)
+    @GetMapping("/{userId}/clear")
     public CompletableFuture<ResponseEntity<?>> clearCart(@PathVariable String userId) {
         try {
             Cart clearedCart = cartService.clearCart(userId);
