@@ -26,7 +26,6 @@ class CartRepositoryTest {
 
     @Test
     void testFindByUserId() {
-        // Test data
         String userId = "user-1";
         Cart cart = new Cart(userId);
 

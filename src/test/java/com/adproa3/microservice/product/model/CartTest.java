@@ -44,14 +44,12 @@ class CartTest {
 
     @Test
     void testConstructors() {
-        // Test default constructor
         Cart cart = new Cart();
         Assertions.assertNull(cart.getCartId());
         Assertions.assertNull(cart.getUserId());
         Assertions.assertEquals(0, cart.getTotalPrice());
         Assertions.assertTrue(cart.getProductsInCart().isEmpty());
 
-        // Test constructor with userId
         Cart userCart = new Cart("user123");
         Assertions.assertNotNull(userCart.getCartId());
         Assertions.assertEquals("user123", userCart.getUserId());
@@ -66,13 +64,11 @@ class CartTest {
         Map<UUID, Integer> productsInCart = new HashMap<>();
         productsInCart.put(UUID.randomUUID(), 1);
 
-        // Test setters
         cart.setCartId(cartId);
         cart.setUserId("user456");
         cart.setTotalPrice(200.0);
         cart.setProductsInCart(productsInCart);
 
-        // Test getters
         Assertions.assertEquals(cartId, cart.getCartId());
         Assertions.assertEquals("user456", cart.getUserId());
         Assertions.assertEquals(200.0, cart.getTotalPrice());

@@ -295,7 +295,7 @@ class CartServiceImplTest {
     void testIsCartEmpty_CartExistsWithProducts() {
         String userId = "user123";
         Cart cart = new Cart(userId);
-        cart.getProductsInCart().put(UUID.randomUUID(), 1); // Adding a product to the cart
+        cart.getProductsInCart().put(UUID.randomUUID(), 1);
         when(cartRepository.findByUserId(userId)).thenReturn(cart);
 
         boolean isEmpty = cartService.isCartEmpty(userId);
@@ -336,7 +336,7 @@ class CartServiceImplTest {
 
         when(cartRepository.findByUserId(userId)).thenReturn(cart);
 
-        Order savedOrder = new Order(userId, name, address, 20.0, productsInCart); // Assuming total price is 20.0
+        Order savedOrder = new Order(userId, name, address, 20.0, productsInCart);
         when(orderRepository.save(any())).thenReturn(savedOrder);
 
         Product product = new Product(productId, "Test Product", 10.0, 100, 0, 0, "https://localhost");

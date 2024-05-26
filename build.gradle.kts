@@ -41,13 +41,13 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	runtimeOnly("org.postgresql:postgresql")
 	compileOnly("org.springframework.boot:spring-boot-devtools")
-	implementation("jakarta.validation:jakarta.validation-api:3.1.0-M2")
+	implementation("jakarta.validation:jakarta.validation-api")
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("io.micrometer:micrometer-registry-prometheus")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	runtimeOnly("io.micrometer:micrometer-registry-prometheus:1.12.5")
+	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 }
 
 tasks.withType<Test> {
