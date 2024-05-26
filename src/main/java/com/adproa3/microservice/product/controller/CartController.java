@@ -53,7 +53,7 @@ public class CartController {
 
     @Async
     @RequestMapping(value = "/{userId}/delete-product", method = RequestMethod.DELETE)
-    public CompletableFuture<ResponseEntity<?>> removeProductFromCart(@PathVariable String userId, @RequestBody UUID productId) {
+    public CompletableFuture<ResponseEntity<?>> deleteProductFromCart(@PathVariable String userId, @RequestBody UUID productId) {
         try {
             Cart updatedCart = cartService.deleteProductFromCart(userId, productId);
             cartObservable.notifyObservers(updatedCart);

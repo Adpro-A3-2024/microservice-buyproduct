@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 class CartControllerTest {
@@ -56,6 +58,14 @@ class CartControllerTest {
         String userId = "user123";
 
         when(cartService.findByUserId(userId)).thenThrow(new RuntimeException("Failed to get cart"));
+
+        CompletableFuture<ResponseEntity<?>> futureResponse = cartController.getCartById(userId);
+
+        futureResponse.whenComplete((response, throwable) -> {
+            assertNotNull(response);
+            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            assertEquals("Failed to get cart: Failed to get cart", response.getBody());
+        });
 
         verify(cartService, times(1)).findByUserId(userId);
         verifyNoMoreInteractions(cartService);
@@ -102,7 +112,17 @@ class CartControllerTest {
         AddProductRequest request = new AddProductRequest();
         request.setProductId(productId);
         request.setQuantity(quantity);
-        when(cartService.addProductToCart(userId, request.getProductId(), request.getQuantity())).thenThrow(new RuntimeException("Failed to add product to cart"));
+
+        when(cartService.addProductToCart(userId, request.getProductId(), request.getQuantity()))
+                .thenThrow(new RuntimeException("Failed to add product to cart"));
+
+        CompletableFuture<ResponseEntity<?>> futureResponse = cartController.addProductToCart(userId, request);
+
+        futureResponse.whenComplete((response, throwable) -> {
+            assertNotNull(response);
+            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            assertEquals("Failed to add product to cart: Failed to add product to cart", response.getBody());
+        });
 
         verify(cartService, times(1)).addProductToCart(userId, request.getProductId(), request.getQuantity());
         verifyNoMoreInteractions(cartService);
@@ -116,7 +136,7 @@ class CartControllerTest {
         Cart cart = new Cart(userId);
         when(cartService.deleteProductFromCart(userId, productId)).thenReturn(cart);
 
-        CompletableFuture<ResponseEntity<?>> response = cartController.removeProductFromCart(userId, productId);
+        CompletableFuture<ResponseEntity<?>> response = cartController.deleteProductFromCart(userId, productId);
 
         assertEquals(ResponseEntity.ok(cart), response.join());
         verify(cartService, times(1)).deleteProductFromCart(userId, productId);
@@ -124,11 +144,19 @@ class CartControllerTest {
     }
 
     @Test
-    void testRemoveProductFromCart_CatchBlock() {
+    void testDeleteProductFromCart_CatchBlock() {
         String userId = "user123";
         UUID productId = UUID.randomUUID();
 
         when(cartService.deleteProductFromCart(userId, productId)).thenThrow(new RuntimeException("Failed to remove product from cart"));
+
+        CompletableFuture<ResponseEntity<?>> futureResponse = cartController.deleteProductFromCart(userId, productId);
+
+        futureResponse.whenComplete((response, throwable) -> {
+            assertNotNull(response);
+            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            assertEquals("Failed to remove product from cart: Failed to remove product from cart", response.getBody());
+        });
 
         verify(cartService, times(1)).deleteProductFromCart(userId, productId);
         verifyNoMoreInteractions(cartService);
@@ -141,16 +169,34 @@ class CartControllerTest {
 
         when(cartService.clearCart(userId)).thenThrow(new RuntimeException("Failed to clear cart"));
 
+        CompletableFuture<ResponseEntity<?>> futureResponse = cartController.clearCart(userId);
+
+        futureResponse.whenComplete((response, throwable) -> {
+            assertNotNull(response);
+            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            assertEquals("Failed to clear cart: Failed to clear cart", response.getBody());
+        });
+
         verify(cartService, times(1)).clearCart(userId);
         verifyNoMoreInteractions(cartService);
         verifyNoInteractions(cartObservable);
     }
 
+
     @Test
     void testClearCart() {
         String userId = "user123";
         Cart clearedCart = new Cart(userId);
+
         when(cartService.clearCart(userId)).thenReturn(clearedCart);
+
+        CompletableFuture<ResponseEntity<?>> futureResponse = cartController.clearCart(userId);
+
+        futureResponse.whenComplete((response, throwable) -> {
+            assertNotNull(response);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertEquals(clearedCart, response.getBody());
+        });
 
         verify(cartService, times(1)).clearCart(userId);
         verify(cartObservable, times(1)).notifyObservers(clearedCart);
@@ -167,6 +213,14 @@ class CartControllerTest {
         Order order = new Order();
         when(cartService.checkout(userId, name, address)).thenReturn(order);
 
+        CompletableFuture<ResponseEntity<?>> futureResponse = cartController.checkout(userId, name, address);
+
+        futureResponse.whenComplete((response, throwable) -> {
+            assertNotNull(response);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertEquals(order, response.getBody());
+        });
+
         verify(cartService, times(1)).checkout(userId, name, address);
         verify(cartObservable, times(1)).notifyObservers(order);
         verifyNoMoreInteractions(cartService);
@@ -181,8 +235,17 @@ class CartControllerTest {
 
         when(cartService.checkout(userId, name, address)).thenThrow(new RuntimeException("Checkout failed"));
 
+        CompletableFuture<ResponseEntity<?>> futureResponse = cartController.checkout(userId, name, address);
+
+        futureResponse.whenComplete((response, throwable) -> {
+            assertNotNull(response);
+            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            assertEquals("Failed to checkout: Checkout failed", response.getBody());
+        });
+
         verify(cartService, times(1)).checkout(userId, name, address);
         verifyNoMoreInteractions(cartService);
         verifyNoInteractions(cartObservable);
     }
+
 }

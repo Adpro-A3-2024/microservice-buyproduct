@@ -1,7 +1,11 @@
 package com.adproa3.microservice.product.controller;
 
+
+import lombok.Generated;
+
 import java.util.UUID;
 
+@Generated
 public class AddProductRequest {
     private UUID productId;
     private int quantity;
