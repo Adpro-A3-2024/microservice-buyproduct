@@ -7,13 +7,14 @@ import com.adproa3.microservice.product.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.*;
-import io.micrometer.core.annotation.Timed;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
+@EnableAsync
 @RequestMapping("/api/cart")
 public class CartController {
     @Autowired
@@ -22,7 +23,6 @@ public class CartController {
     @Autowired
     private CartObservable cartObservable;
 
-    @Timed
     @Async
     @GetMapping("/{userId}")
     public CompletableFuture<ResponseEntity<?>> getCartById(@PathVariable String userId) {
@@ -38,7 +38,6 @@ public class CartController {
         }
     }
 
-    @Timed
     @Async
     @PostMapping("/{userId}/add-product")
     public CompletableFuture<ResponseEntity<?>> addProductToCart(@PathVariable String userId, @RequestBody UUID productId, @RequestParam int quantity) {
@@ -64,7 +63,6 @@ public class CartController {
         }
     }
 
-    @Timed
     @Async
     @DeleteMapping("/{userId}/clear")
     public CompletableFuture<ResponseEntity<?>> clearCart(@PathVariable String userId) {
@@ -77,7 +75,6 @@ public class CartController {
         }
     }
 
-    @Timed
     @Async
     @PostMapping("/{userId}/checkout")
     public CompletableFuture<ResponseEntity<?>> checkout(@PathVariable String userId, @RequestParam String name, @RequestParam String address) {
