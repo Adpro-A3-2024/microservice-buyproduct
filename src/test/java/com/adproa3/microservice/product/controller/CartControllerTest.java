@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class CartControllerTest {
+class CartControllerTest {
 
     @Mock
     private CartService cartService;
@@ -57,8 +57,6 @@ public class CartControllerTest {
 
         when(cartService.findByUserId(userId)).thenThrow(new RuntimeException("Failed to get cart"));
 
-        CompletableFuture<ResponseEntity<?>> response = cartController.getCartById(userId);
-
         verify(cartService, times(1)).findByUserId(userId);
         verifyNoMoreInteractions(cartService);
         verifyNoInteractions(cartObservable);
@@ -85,8 +83,11 @@ public class CartControllerTest {
         productsInCart.put(productId, quantity);
         cart.setProductsInCart(productsInCart);
         when(cartService.addProductToCart(userId, productId, quantity)).thenReturn(cart);
+        AddProductRequest request = new AddProductRequest();
+        request.setProductId(productId);
+        request.setQuantity(quantity);
 
-        CompletableFuture<ResponseEntity<?>> response = cartController.addProductToCart(userId, productId, quantity);
+        CompletableFuture<ResponseEntity<?>> response = cartController.addProductToCart(userId, request);
 
         assertEquals(ResponseEntity.ok(cart), response.join());
         verify(cartService, times(1)).addProductToCart(userId, productId, quantity);
@@ -98,12 +99,12 @@ public class CartControllerTest {
         String userId = "user123";
         UUID productId = UUID.randomUUID();
         int quantity = 2;
+        AddProductRequest request = new AddProductRequest();
+        request.setProductId(productId);
+        request.setQuantity(quantity);
+        when(cartService.addProductToCart(userId, request.getProductId(), request.getQuantity())).thenThrow(new RuntimeException("Failed to add product to cart"));
 
-        when(cartService.addProductToCart(userId, productId, quantity)).thenThrow(new RuntimeException("Failed to add product to cart"));
-
-        CompletableFuture<ResponseEntity<?>> response = cartController.addProductToCart(userId, productId, quantity);
-
-        verify(cartService, times(1)).addProductToCart(userId, productId, quantity);
+        verify(cartService, times(1)).addProductToCart(userId, request.getProductId(), request.getQuantity());
         verifyNoMoreInteractions(cartService);
         verifyNoInteractions(cartObservable);
     }
@@ -113,12 +114,12 @@ public class CartControllerTest {
         String userId = "user1";
         UUID productId = product.getProductId();
         Cart cart = new Cart(userId);
-        when(cartService.removeProductFromCart(userId, productId)).thenReturn(cart);
+        when(cartService.deleteProductFromCart(userId, productId)).thenReturn(cart);
 
         CompletableFuture<ResponseEntity<?>> response = cartController.removeProductFromCart(userId, productId);
 
         assertEquals(ResponseEntity.ok(cart), response.join());
-        verify(cartService, times(1)).removeProductFromCart(userId, productId);
+        verify(cartService, times(1)).deleteProductFromCart(userId, productId);
         verify(cartObservable, times(1)).notifyObservers(cart);
     }
 
@@ -127,11 +128,9 @@ public class CartControllerTest {
         String userId = "user123";
         UUID productId = UUID.randomUUID();
 
-        when(cartService.removeProductFromCart(userId, productId)).thenThrow(new RuntimeException("Failed to remove product from cart"));
+        when(cartService.deleteProductFromCart(userId, productId)).thenThrow(new RuntimeException("Failed to remove product from cart"));
 
-        CompletableFuture<ResponseEntity<?>> response = cartController.removeProductFromCart(userId, productId);
-
-        verify(cartService, times(1)).removeProductFromCart(userId, productId);
+        verify(cartService, times(1)).deleteProductFromCart(userId, productId);
         verifyNoMoreInteractions(cartService);
         verifyNoInteractions(cartObservable);
     }
@@ -141,8 +140,6 @@ public class CartControllerTest {
         String userId = "user123";
 
         when(cartService.clearCart(userId)).thenThrow(new RuntimeException("Failed to clear cart"));
-
-        CompletableFuture<ResponseEntity<?>> response = cartController.clearCart(userId);
 
         verify(cartService, times(1)).clearCart(userId);
         verifyNoMoreInteractions(cartService);
@@ -154,8 +151,6 @@ public class CartControllerTest {
         String userId = "user123";
         Cart clearedCart = new Cart(userId);
         when(cartService.clearCart(userId)).thenReturn(clearedCart);
-
-        CompletableFuture<ResponseEntity<?>> response = cartController.clearCart(userId);
 
         verify(cartService, times(1)).clearCart(userId);
         verify(cartObservable, times(1)).notifyObservers(clearedCart);
@@ -172,8 +167,6 @@ public class CartControllerTest {
         Order order = new Order();
         when(cartService.checkout(userId, name, address)).thenReturn(order);
 
-        CompletableFuture<ResponseEntity<?>> response = cartController.checkout(userId, name, address);
-
         verify(cartService, times(1)).checkout(userId, name, address);
         verify(cartObservable, times(1)).notifyObservers(order);
         verifyNoMoreInteractions(cartService);
@@ -187,8 +180,6 @@ public class CartControllerTest {
         String address = "123 Main Street";
 
         when(cartService.checkout(userId, name, address)).thenThrow(new RuntimeException("Checkout failed"));
-
-        CompletableFuture<ResponseEntity<?>> response = cartController.checkout(userId, name, address);
 
         verify(cartService, times(1)).checkout(userId, name, address);
         verifyNoMoreInteractions(cartService);

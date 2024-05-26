@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "temp_orders")
 @Data
 @NoArgsConstructor
 @Generated
@@ -24,7 +24,7 @@ public class Order {
     private double totalPrice;
 
     @ElementCollection
-    @CollectionTable(name = "order_items", joinColumns = @JoinColumn(name = "order_id"))
+    @CollectionTable(name = "temp_order_items", joinColumns = @JoinColumn(name = "order_id"))
     @MapKeyColumn(name = "product_id", columnDefinition = "uuid")
     @Column(name = "quantity")
     private Map<UUID, Integer> products;

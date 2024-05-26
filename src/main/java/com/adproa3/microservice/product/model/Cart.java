@@ -21,7 +21,7 @@ public class Cart {
     private double totalPrice;
 
     @ElementCollection
-    @CollectionTable(name = "cart_items", joinColumns = @JoinColumn(name = "cart_id"))
+    @CollectionTable(name = "isi_cart", joinColumns = @JoinColumn(name = "cart_id"))
     @MapKeyColumn(name = "product_id", columnDefinition = "uuid")
     @Column(name = "quantity")
     private Map<UUID, Integer> productsInCart = new HashMap<>();

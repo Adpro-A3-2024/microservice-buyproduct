@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class CartTest {
+class CartTest {
     Cart cart;
 
     @BeforeEach
@@ -43,7 +43,7 @@ public class CartTest {
     }
 
     @Test
-    public void testConstructors() {
+    void testConstructors() {
         // Test default constructor
         Cart cart = new Cart();
         Assertions.assertNull(cart.getCartId());
@@ -60,7 +60,7 @@ public class CartTest {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         Cart cart = new Cart();
         UUID cartId = UUID.randomUUID();
         Map<UUID, Integer> productsInCart = new HashMap<>();

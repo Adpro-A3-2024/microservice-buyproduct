@@ -114,7 +114,7 @@ public class CartServiceImplTest {
     }
 
     @Test
-    void testRemoveProductFromCart_CartFound() {
+    void testDeleteProductFromCart_CartFound() {
         String userId = "user123";
         UUID productId = UUID.randomUUID();
 
@@ -126,14 +126,14 @@ public class CartServiceImplTest {
         when(cartRepository.findByUserId(userId)).thenReturn(cart);
         when(cartRepository.save(any())).thenReturn(cart);
 
-        Cart updatedCart = cartService.removeProductFromCart(userId, productId);
+        Cart updatedCart = cartService.deleteProductFromCart(userId, productId);
 
         assertNotNull(updatedCart);
         assertTrue(updatedCart.getProductsInCart().isEmpty());
     }
 
     @Test
-    void testRemoveProductFromCart_CartNotFound() {
+    void testDeleteProductFromCart_CartNotFound() {
         String userId = "user123";
         UUID productId = UUID.randomUUID();
 
@@ -141,19 +141,19 @@ public class CartServiceImplTest {
 
         when(cartRepository.save(any())).thenThrow(new RuntimeException("Save should not be called"));
 
-        Cart updatedCart = cartService.removeProductFromCart(userId, productId);
+        Cart updatedCart = cartService.deleteProductFromCart(userId, productId);
 
         assertNull(updatedCart);
     }
 
     @Test
-    void testRemoveProductFromCart_EmptyCart() {
+    void testDeleteProductFromCart_EmptyCart() {
         String userId = "user123";
         UUID productId = UUID.randomUUID();
         Cart cart = new Cart(userId);
         when(cartRepository.findByUserId(userId)).thenReturn(cart);
 
-        Cart updatedCart = cartService.removeProductFromCart(userId, productId);
+        Cart updatedCart = cartService.deleteProductFromCart(userId, productId);
         assertNull(updatedCart);
     }
 

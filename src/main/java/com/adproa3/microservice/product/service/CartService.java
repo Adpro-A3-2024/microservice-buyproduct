@@ -12,7 +12,7 @@ public interface CartService {
     Cart findByUserId(String userId);
     Cart saveCart(Cart cart);
     Cart addProductToCart(String userId, UUID productId, int quantity);
-    Cart removeProductFromCart(String userId, UUID productId);
+    Cart deleteProductFromCart(String userId, UUID productId);
     Cart clearCart(String userId);
     double getTotalPrice(String userId);
     Cart updateProductQuantity(String userId, UUID productId, int newQuantity);

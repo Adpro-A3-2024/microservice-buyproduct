@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -24,7 +25,7 @@ public class CartController {
     private CartObservable cartObservable;
 
     @Async
-    @GetMapping("/{userId}")
+    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     public CompletableFuture<ResponseEntity<?>> getCartById(@PathVariable String userId) {
         try {
             Cart cart = cartService.findByUserId(userId);
@@ -39,10 +40,10 @@ public class CartController {
     }
 
     @Async
-    @PostMapping("/{userId}/add-product")
-    public CompletableFuture<ResponseEntity<?>> addProductToCart(@PathVariable String userId, @RequestBody UUID productId, @RequestParam int quantity) {
+    @RequestMapping(value = "/{userId}/add-product", method = RequestMethod.POST)
+    public CompletableFuture<ResponseEntity<?>> addProductToCart(@PathVariable String userId, @RequestBody @Validated AddProductRequest request) {
         try {
-            Cart updatedCart = cartService.addProductToCart(userId, productId, quantity);
+            Cart updatedCart = cartService.addProductToCart(userId, request.getProductId(), request.getQuantity());
             cartObservable.notifyObservers(updatedCart);
             return CompletableFuture.completedFuture(ResponseEntity.ok(updatedCart));
         } catch (Exception e) {
@@ -50,12 +51,11 @@ public class CartController {
         }
     }
 
-
     @Async
-    @DeleteMapping("/{userId}/remove-product")
+    @RequestMapping(value = "/{userId}/delete-product", method = RequestMethod.DELETE)
     public CompletableFuture<ResponseEntity<?>> removeProductFromCart(@PathVariable String userId, @RequestBody UUID productId) {
         try {
-            Cart updatedCart = cartService.removeProductFromCart(userId, productId);
+            Cart updatedCart = cartService.deleteProductFromCart(userId, productId);
             cartObservable.notifyObservers(updatedCart);
             return CompletableFuture.completedFuture(ResponseEntity.ok(updatedCart));
         } catch (Exception e) {
@@ -64,7 +64,7 @@ public class CartController {
     }
 
     @Async
-    @DeleteMapping("/{userId}/clear")
+    @RequestMapping(value = "/{userId}/clear", method = RequestMethod.DELETE)
     public CompletableFuture<ResponseEntity<?>> clearCart(@PathVariable String userId) {
         try {
             Cart clearedCart = cartService.clearCart(userId);
